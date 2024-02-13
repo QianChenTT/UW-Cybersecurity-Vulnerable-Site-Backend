@@ -1,56 +1,40 @@
-name: Deploy FastAPI Application
+name: Deploy Backend to EC2 via SSH
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10.12'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install fastapi uvicorn pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    
-    # - name: Run tests
-    #   run: |
-    #     pytest
-
   deploy:
-    needs: test
+    name: Deploy Backend
     runs-on: ubuntu-latest
     steps:
-    - name: Add SSH key to known hosts
-      run: |
-        echo "${{ secrets.SSH_KNOWN_HOST }}" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Installing SSH Key
-      uses: webfactory/ssh-agent@v0.5.3
+    - name: Transfer Backend Files
+      uses: appleboy/scp-action@master
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    
-    - name: Deploy to EC2
-      run: |
-        rsync -av --exclude '.git*' --exclude '.github' --exclude 'venv' ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ubuntu/backend/
-        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
-          cd /home/ubuntu/backend/
-          # Assuming you have a virtual environment set up
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "./"  # Adjust path as necessary
+        target: "/home/ubuntu/backend"  # Adjust path as necessary
+
+    - name: Additional Backend Setup via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd /home/ubuntu/backend
           source venv/bin/activate
-          # Install any new dependencies
           pip install -r requirements.txt
-          # Kill the current Uvicorn process if running
+          # Restart backend service, e.g., using systemctl or directly
           pkill -f uvicorn
-          # Start Uvicorn in the background
           nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
-        EOF
 
