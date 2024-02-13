@@ -36,8 +36,8 @@ jobs:
     
     - name: Deploy to EC2
       run: |
-        rsync -av --exclude '.git*' --exclude '.github' --exclude 'venv' ./ ${{ secrets.USER }}@${{ secrets.HOST }}:/home/ubuntu/backend/
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} << EOF
+        rsync -av --exclude '.git*' --exclude '.github' --exclude 'venv' ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ubuntu/backend/
+        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
           cd /home/ubuntu/backend/
           # Assuming you have a virtual environment set up
           source venv/bin/activate
