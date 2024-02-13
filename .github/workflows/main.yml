@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Add SSH key to known hosts
       run: |
-        echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_KNOWN_HOST }}" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
 
     - name: Installing SSH Key
