@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 #to run use uvicorn main:app --reload
-#this is a test to action
+
 app = FastAPI()
 
 
