@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 #to run use uvicorn main:app --reload
+#test git action
 
 app = FastAPI()
 
