@@ -1,3 +1,5 @@
+In process of transitioning FastAPI -> Django
+
 # UW Cybersecurity Club - Vulnerable Web Application
 
 A deliberately vulnerable web application developed by the University of Waterloo Cybersecurity Club for educational and skill-building purposes within the realm of web application security. This project welcomes contributions to expand the range of vulnerabilities and enhance its training value. Dummy eCommerce website that sells dreams.
